@@ -1,14 +1,13 @@
 const User = require('../Model/userModel');
 
-// Fetch user details
+// Fetch all users details GET
 const getUsers = async (req,res) => {
     const users = await User.find();
     res.json(users);
 };
 
-//Create new user
+//Create new user POST
 const createUser = async (req,res) => {
-    console.log('request body:', req.body)
     const { name, age } = req.body;
     const user = await User.create({
         name,
@@ -17,23 +16,23 @@ const createUser = async (req,res) => {
     res.json(user);
 };
 
-//Fetch user by specific id
+//Fetch user by specific id GET
 const getUser = async (req,res) => {
     const user = await User.findById(req.params.id);
     if(!user) {
-        // res.status(404);
-        res.send('user not found');
+        res.status(404);
+        res.send("User not found");
     }
     res.json(user);
 };
 
-//Update specific user
+//Update specific user PUT
 const updateUser = async (req,res) => {
-    // const user = await User.findById(req.params.id);
-    // if(!user) {
-    //     // res.status(404);
-    //     res.send('user not found');
-    // }
+    const user = await User.findById(req.params.id);
+    if(!user) {
+        res.status(404);
+        res.send('user not found');
+    }
 
     const updatedUser = await User.findByIdAndUpdate(
         req.params.id,
@@ -44,15 +43,15 @@ const updateUser = async (req,res) => {
     res.json(updatedUser);
 };
 
-//Delete specific user
+//Delete specific user DELETE
 const deleteUser = async (req,res) => {
     const user = await User.findById(req.params.id);
     if(!user) {
-        // res.status(404);
+        res.status(404);
         res.send('user not found');
     }
-    const removeUser = await User.remove();
-    res.json(removeUser);
+    await User.findByIdAndDelete(user);
+    res.json(user);
 };
 
 module.exports = {getUsers, createUser, getUser, updateUser,deleteUser};
